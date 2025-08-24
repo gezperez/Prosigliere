@@ -1,0 +1,12 @@
+export enum Colors {
+  PRIMARY = '#007AFF',
+  SECONDARY = '#666',
+  TERTIARY = '#f0f0f0',
+  GRYFFINDOR = '#740001',
+  SLYTHERIN = '#1A472A',
+  RAVENCLAW = '#0E1A40',
+  HUFFLEPUFF = '#ECB939',
+  DARK_BROWN = '#2C1810',
+  LIGHT_BROWN = '#F5F5DC',
+  BLACK = '#000',
+}

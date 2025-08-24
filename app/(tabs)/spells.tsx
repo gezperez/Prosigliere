@@ -16,6 +16,8 @@ export default function SpellsPage() {
   const spells = useAppSelector(selectSpells);
   const loading = useAppSelector(state => state.hp.spellsLoading);
 
+  console.log(spells[0]);
+
   useEffect(() => {
     dispatch(getSpells());
   }, [dispatch]);

@@ -22,7 +22,7 @@ export interface Character {
   actor: string;
   alternate_actors: string[];
   alive: boolean;
-  image: string;
+  image?: string;
 }
 
 export interface Spell {
