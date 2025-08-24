@@ -12,7 +12,10 @@
     "lint:fix": "expo lint --fix",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
-    "prepare": "husky"
+    "type:check": "tsc --noEmit",
+    "prepare": "husky",
+    "precommit": "lint-staged",
+    "tsc": "tsc --noEmit"
   },
   "dependencies": {
     "@expo/vector-icons": "^14.1.0",
@@ -56,10 +59,10 @@
   "packageManager": "yarn@1.22.22",
   "lint-staged": {
     "*.{js,jsx,ts,tsx}": [
-      "prettier --write",
-      "eslint --fix"
+      "eslint --fix",
+      "prettier --write"
     ],
-    "*.{json,md,yml,yaml}": [
+    "*.{json,css,md}": [
       "prettier --write"
     ]
   }
