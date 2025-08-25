@@ -1,3 +1,5 @@
+import { ImageSourcePropType } from 'react-native';
+
 export interface Character {
   id: string;
   name: string;
@@ -30,4 +32,13 @@ export interface Spell {
   name: string;
   description: string;
   category?: string;
+}
+
+export interface House {
+  id: string;
+  name: string;
+  description: string;
+  image: ImageSourcePropType;
+  color: string;
+  lightColor: string;
 }

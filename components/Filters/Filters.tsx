@@ -15,6 +15,7 @@ const Filters = ({ filters, onFilterPress }: FiltersProps) => {
           key={filter.id}
           filter={filter}
           onPress={() => onFilterPress(filter)}
+          style={styles.filter}
         />
       ))}
     </View>

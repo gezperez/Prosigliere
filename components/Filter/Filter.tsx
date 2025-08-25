@@ -1,4 +1,4 @@
-import { Text, TouchableOpacity } from 'react-native';
+import { StyleProp, Text, TouchableOpacity, ViewStyle } from 'react-native';
 import styles from './styles';
 
 export type FilterType = {
@@ -10,13 +10,14 @@ export type FilterType = {
 type FilterProps = {
   filter: FilterType;
   onPress: (filter: FilterType) => void;
+  style?: StyleProp<ViewStyle>;
 };
 
-const Filter = ({ filter, onPress }: FilterProps) => {
+const Filter = ({ filter, onPress, style }: FilterProps) => {
   return (
     <TouchableOpacity
       onPress={() => onPress(filter)}
-      style={[styles.container, filter.selected && styles.active]}
+      style={[styles.container, filter.selected && styles.active, style]}
     >
       <Text style={[styles.text, filter.selected && styles.textActive]}>
         {filter.name}

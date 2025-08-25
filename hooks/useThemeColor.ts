@@ -3,19 +3,18 @@
  * https://docs.expo.dev/guides/color-schemes/
  */
 
-import { Colors } from '@/constants/Colors';
-import { useColorScheme } from '@/hooks/useColorScheme';
+import { Colors } from '@/app/ds/components/Text/enums/Colors';
+import { useAppSelector } from '@/store/hooks';
+import { selectSelectedHouse } from '@/store/selectors/characters';
 
-export function useThemeColor(
-  props: { light?: string; dark?: string },
-  colorName: keyof typeof Colors.light & keyof typeof Colors.dark
-) {
-  const theme = useColorScheme() ?? 'light';
-  const colorFromProps = props[theme];
+export const useThemeColor = () => {
+  const selectedHouse = useAppSelector(selectSelectedHouse);
 
-  if (colorFromProps) {
-    return colorFromProps;
-  } else {
-    return Colors[theme][colorName];
-  }
-}
+  const themeBackgroundColor = selectedHouse?.color || Colors.LIGHT_BROWN;
+
+  return {
+    themeBackgroundColor,
+    lighterThemeColor: selectedHouse?.lightColor || Colors.LIGHT_BROWN,
+    selectedHouse,
+  };
+};

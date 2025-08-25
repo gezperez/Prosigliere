@@ -4,7 +4,10 @@ const styles = StyleSheet.create({
   container: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    marginVertical: 12,
+    marginHorizontal: 12,
+  },
+  filter: {
+    marginBottom: 12,
   },
 });
 

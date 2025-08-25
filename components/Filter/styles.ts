@@ -2,10 +2,9 @@ import { StyleSheet } from 'react-native';
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
     paddingVertical: 12,
     paddingHorizontal: 20,
-    marginHorizontal: 6,
+    marginRight: 6,
     borderRadius: 25,
     backgroundColor: '#2C1810', // Dark brown like old parchment
     alignItems: 'center',

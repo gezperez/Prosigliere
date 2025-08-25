@@ -1,6 +1,6 @@
 import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { createHPService } from '../api/hp/api';
-import { Character, Spell } from '../api/hp/types';
+import { Character, House, Spell } from '../api/hp/types';
 
 export interface HPState {
   characters: Character[];
@@ -8,6 +8,9 @@ export interface HPState {
   charactersLoading: boolean;
   spellsLoading: boolean;
   favoriteCharacterIds: string[];
+  selectedHouse: House | null;
+  houses: House[];
+  housesLoading: boolean;
 }
 
 const initialState: HPState = {
@@ -16,9 +19,12 @@ const initialState: HPState = {
   charactersLoading: false,
   spellsLoading: false,
   favoriteCharacterIds: [],
+  selectedHouse: null,
+  houses: [],
+  housesLoading: false,
 };
 
-const hpService = createHPService('https://hp-api.onrender.com/api');
+const hpService = createHPService(process.env.EXPO_PUBLIC_API_URL || '');
 
 export const getCharacters = createAsyncThunk(
   'hp/fetchCharacters',
@@ -42,6 +48,17 @@ export const getSpells = createAsyncThunk(
   }
 );
 
+export const getHouses = createAsyncThunk(
+  'hp/fetchHouses',
+  async (_, { rejectWithValue }) => {
+    try {
+      return hpService.getHouses();
+    } catch (error: any) {
+      return rejectWithValue(error.message || 'Failed to fetch houses');
+    }
+  }
+);
+
 const hpSlice = createSlice({
   name: 'hp',
   initialState,
@@ -54,6 +71,9 @@ const hpSlice = createSlice({
       } else {
         state.favoriteCharacterIds.push(characterId);
       }
+    },
+    setSelectedHouse: (state, action: PayloadAction<House>) => {
+      state.selectedHouse = action.payload;
     },
   },
   extraReducers: builder => {
@@ -83,8 +103,20 @@ const hpSlice = createSlice({
       .addCase(getSpells.rejected, (state, action) => {
         state.spellsLoading = false;
       });
+
+    builder
+      .addCase(getHouses.pending, state => {
+        state.housesLoading = true;
+      })
+      .addCase(getHouses.fulfilled, (state, action: PayloadAction<House[]>) => {
+        state.housesLoading = false;
+        state.houses = action.payload;
+      })
+      .addCase(getHouses.rejected, (state, action) => {
+        state.housesLoading = false;
+      });
   },
 });
 
-export const { toggleFavorite } = hpSlice.actions;
+export const { toggleFavorite, setSelectedHouse } = hpSlice.actions;
 export default hpSlice.reducer;

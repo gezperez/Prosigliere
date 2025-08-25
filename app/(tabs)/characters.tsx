@@ -1,19 +1,31 @@
 import { Character } from '@/api/hp/types';
 import { Text } from '@/app/ds/components/Text';
+import { Colors as TextColors } from '@/app/ds/components/Text/enums/Colors';
 import CharacterCard from '@/components/CharacterCard/CharacterCard';
 import { FilterType } from '@/components/Filter/Filter';
 import Filters from '@/components/Filters/Filters';
+import HouseShield from '@/components/HouseShield';
+import { IconSymbol } from '@/components/ui/IconSymbol';
 import { Colors } from '@/constants/Colors';
+import { useThemeColor } from '@/hooks/useThemeColor';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
-import { getCharacters } from '@/store/hpSlice';
+import { getCharacters, getHouses } from '@/store/hpSlice';
 import {
   selectCharacters,
   selectFavoriteCharacters,
+  selectSelectedHouse,
   selectStaff,
   selectStudents,
 } from '@/store/selectors/characters';
+import { router, useNavigation } from 'expo-router';
 import React, { useEffect, useMemo, useState } from 'react';
-import { ActivityIndicator, FlatList, StyleSheet, View } from 'react-native';
+import {
+  ActivityIndicator,
+  FlatList,
+  StyleSheet,
+  TouchableOpacity,
+  View,
+} from 'react-native';
 
 enum CharacterFilter {
   ALL = 'all',
@@ -23,11 +35,14 @@ enum CharacterFilter {
 }
 
 export default function CharactersPage() {
+  const navigation = useNavigation();
   const dispatch = useAppDispatch();
+  const { lighterThemeColor } = useThemeColor();
   const characters = useAppSelector(selectCharacters);
   const students = useAppSelector(selectStudents);
   const staff = useAppSelector(selectStaff);
   const favoriteIds = useAppSelector(selectFavoriteCharacters);
+  const selectedHouse = useAppSelector(selectSelectedHouse);
   const loading = useAppSelector(state => state.hp.charactersLoading);
 
   const [selectedFilterId, setSelectedFilterId] = useState<CharacterFilter>(
@@ -36,7 +51,23 @@ export default function CharactersPage() {
 
   useEffect(() => {
     dispatch(getCharacters());
+    dispatch(getHouses());
   }, [dispatch]);
+
+  useEffect(() => {
+    navigation.setOptions({
+      headerLeft: () => (
+        <TouchableOpacity
+          onPress={() => router.push('/settings')}
+          style={{ marginLeft: 16 }}
+        >
+          <IconSymbol size={24} name="gear" color={TextColors.DARK_BROWN} />
+        </TouchableOpacity>
+      ),
+      headerRight: () =>
+        selectedHouse && <HouseShield houseId={selectedHouse.id} size={28} />,
+    });
+  }, [navigation, selectedHouse]);
 
   const getFilteredCharacters = (): Character[] => {
     switch (selectedFilterId) {
@@ -84,31 +115,60 @@ export default function CharactersPage() {
     return <CharacterCard character={item} />;
   };
 
+  const getFilterName = (): string => {
+    switch (selectedFilterId) {
+      case CharacterFilter.STUDENTS:
+        return 'Students';
+      case CharacterFilter.STAFF:
+        return 'Staff';
+      case CharacterFilter.FAVORITES:
+        return 'Favorites';
+      default:
+        return 'Characters';
+    }
+  };
+
+  const filteredCharacters = getFilteredCharacters();
+  const hasCharacters = filteredCharacters.length > 0;
+
   if (loading) {
     return (
       <View style={styles.loadingContainer}>
-        <ActivityIndicator size="large" color="#007AFF" />
+        <ActivityIndicator
+          size="large"
+          color={Colors.light.darkBrown}
+          style={styles.activityIndicator}
+        />
       </View>
     );
   }
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, { backgroundColor: lighterThemeColor }]}>
       <View style={styles.header}>
-        <Text variant="title">Characters</Text>
         <Text variant="caption">
-          {getFilteredCharacters().length} characters
+          {filteredCharacters.length}{' '}
+          {filteredCharacters.length === 1 ? 'character' : 'characters'}
         </Text>
       </View>
 
       <Filters filters={filters} onFilterPress={handleFilterPress} />
 
-      <FlatList
-        data={getFilteredCharacters()}
-        renderItem={renderItem}
-        keyExtractor={item => item.id}
-        showsVerticalScrollIndicator={false}
-      />
+      {hasCharacters ? (
+        <FlatList
+          data={filteredCharacters}
+          renderItem={renderItem}
+          keyExtractor={item => item.id}
+          showsVerticalScrollIndicator={false}
+          style={styles.list}
+        />
+      ) : (
+        <View style={styles.notFoundContainer}>
+          <Text variant="body" style={styles.notFoundText}>
+            No {getFilterName().toLowerCase()} found
+          </Text>
+        </View>
+      )}
     </View>
   );
 }
@@ -116,15 +176,31 @@ export default function CharactersPage() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.light.background,
+  },
+  list: {
+    flex: 1,
   },
   loadingContainer: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
+    backgroundColor: Colors.light.background,
+  },
+  activityIndicator: {
+    opacity: 0.8,
   },
   header: {
-    alignItems: 'center',
+    marginTop: 12,
     marginBottom: 12,
+    paddingHorizontal: 16,
+  },
+  notFoundContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  notFoundText: {
+    textAlign: 'center',
+    opacity: 0.6,
   },
 });

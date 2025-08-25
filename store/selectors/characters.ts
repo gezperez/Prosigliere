@@ -16,10 +16,12 @@ export const selectStaff = createSelector([selectCharacters], characters =>
   characters.filter(char => char.hogwartsStaff)
 );
 
-export const selectFavoriteCharacters = createSelector(
-  [selectHPState],
-  hpState => hpState.favoriteCharacterIds
-);
+export const selectFavoriteCharacters = (state: RootState) =>
+  state.hp.favoriteCharacterIds;
+
+export const selectSelectedHouse = (state: RootState) => state.hp.selectedHouse;
+
+export const selectHouses = (state: RootState) => state.hp.houses;
 
 export const selectIsCharacterFavorite = (characterId: string) =>
   createSelector([selectFavoriteCharacters], favoriteIds =>
