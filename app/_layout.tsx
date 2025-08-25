@@ -9,6 +9,7 @@ import { StatusBar } from 'expo-status-bar';
 import 'react-native-reanimated';
 import { Provider } from 'react-redux';
 
+import { Colors } from '@/app/ds/components/Text/enums/Colors';
 import { useColorScheme } from '@/hooks/useColorScheme';
 import { store } from '@/store';
 import { View } from 'react-native';
@@ -42,6 +43,25 @@ export default function RootLayout() {
         >
           <Stack>
             <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+            <Stack.Screen
+              name="character/[id]"
+              options={({ route }) => ({
+                title: 'Character Details',
+                headerStyle: {
+                  backgroundColor: Colors.WHITE,
+                  borderBottomWidth: 2,
+                  borderBottomColor: Colors.DARK_BROWN,
+                },
+                headerTintColor: Colors.DARK_BROWN,
+                headerTitleStyle: {
+                  fontFamily: 'Caudex-Bold',
+                  fontSize: 18,
+                },
+                headerShadowVisible: false,
+                headerBackTitleVisible: false,
+                headerBackTitle: 'Back',
+              })}
+            />
             <Stack.Screen name="+not-found" />
           </Stack>
           <StatusBar style="auto" />

@@ -7,6 +7,7 @@ export interface HPState {
   spells: Spell[];
   charactersLoading: boolean;
   spellsLoading: boolean;
+  favoriteCharacterIds: string[];
 }
 
 const initialState: HPState = {
@@ -14,6 +15,7 @@ const initialState: HPState = {
   spells: [],
   charactersLoading: false,
   spellsLoading: false,
+  favoriteCharacterIds: [],
 };
 
 const hpService = createHPService('https://hp-api.onrender.com/api');
@@ -43,7 +45,17 @@ export const getSpells = createAsyncThunk(
 const hpSlice = createSlice({
   name: 'hp',
   initialState,
-  reducers: {},
+  reducers: {
+    toggleFavorite: (state, action: PayloadAction<string>) => {
+      const characterId = action.payload;
+      const index = state.favoriteCharacterIds.indexOf(characterId);
+      if (index > -1) {
+        state.favoriteCharacterIds.splice(index, 1);
+      } else {
+        state.favoriteCharacterIds.push(characterId);
+      }
+    },
+  },
   extraReducers: builder => {
     builder
       .addCase(getCharacters.pending, state => {
@@ -74,4 +86,5 @@ const hpSlice = createSlice({
   },
 });
 
+export const { toggleFavorite } = hpSlice.actions;
 export default hpSlice.reducer;

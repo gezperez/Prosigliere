@@ -1,7 +1,8 @@
 import { Character } from '@/api/hp/types';
 import { Text } from '@/app/ds/components/Text';
 import { Colors } from '@/app/ds/components/Text/enums/Colors';
-import { Image, View } from 'react-native';
+import { router } from 'expo-router';
+import { Image, TouchableOpacity, View } from 'react-native';
 import styles from './styles';
 
 type CharacterCardProps = {
@@ -39,12 +40,18 @@ const CharacterCard = ({ character }: CharacterCardProps) => {
     }
   };
 
+  const handlePress = () => {
+    router.push(`/character/${character.id}`);
+  };
+
   return (
-    <View
+    <TouchableOpacity
       style={[
         styles.container,
         { borderColor: getHouseColor(character.house) },
       ]}
+      onPress={handlePress}
+      activeOpacity={0.7}
     >
       <View style={styles.imageContainer}>
         {character.image ? (
@@ -70,7 +77,7 @@ const CharacterCard = ({ character }: CharacterCardProps) => {
         style={styles.houseImage}
         resizeMode="contain"
       />
-    </View>
+    </TouchableOpacity>
   );
 };
 

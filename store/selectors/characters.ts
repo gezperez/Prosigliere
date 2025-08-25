@@ -15,3 +15,13 @@ export const selectStudents = createSelector([selectCharacters], characters =>
 export const selectStaff = createSelector([selectCharacters], characters =>
   characters.filter(char => char.hogwartsStaff)
 );
+
+export const selectFavoriteCharacters = createSelector(
+  [selectHPState],
+  hpState => hpState.favoriteCharacterIds
+);
+
+export const selectIsCharacterFavorite = (characterId: string) =>
+  createSelector([selectFavoriteCharacters], favoriteIds =>
+    favoriteIds.includes(characterId)
+  );

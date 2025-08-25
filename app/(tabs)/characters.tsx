@@ -8,6 +8,7 @@ import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import { getCharacters } from '@/store/hpSlice';
 import {
   selectCharacters,
+  selectFavoriteCharacters,
   selectStaff,
   selectStudents,
 } from '@/store/selectors/characters';
@@ -18,6 +19,7 @@ enum CharacterFilter {
   ALL = 'all',
   STUDENTS = 'students',
   STAFF = 'staff',
+  FAVORITES = 'favorites',
 }
 
 export default function CharactersPage() {
@@ -25,6 +27,7 @@ export default function CharactersPage() {
   const characters = useAppSelector(selectCharacters);
   const students = useAppSelector(selectStudents);
   const staff = useAppSelector(selectStaff);
+  const favoriteIds = useAppSelector(selectFavoriteCharacters);
   const loading = useAppSelector(state => state.hp.charactersLoading);
 
   const [selectedFilterId, setSelectedFilterId] = useState<CharacterFilter>(
@@ -41,6 +44,8 @@ export default function CharactersPage() {
         return students;
       case CharacterFilter.STAFF:
         return staff;
+      case CharacterFilter.FAVORITES:
+        return characters.filter(char => favoriteIds.includes(char.id));
       default:
         return characters;
     }
@@ -63,8 +68,13 @@ export default function CharactersPage() {
         name: 'Staff',
         selected: selectedFilterId === CharacterFilter.STAFF,
       },
+      {
+        id: CharacterFilter.FAVORITES,
+        name: `Favorites (${favoriteIds.length})`,
+        selected: selectedFilterId === CharacterFilter.FAVORITES,
+      },
     ];
-  }, [selectedFilterId]);
+  }, [selectedFilterId, favoriteIds.length]);
 
   const handleFilterPress = (filter: FilterType) => {
     setSelectedFilterId(filter.id as CharacterFilter);
@@ -115,5 +125,6 @@ const styles = StyleSheet.create({
   },
   header: {
     alignItems: 'center',
+    marginBottom: 12,
   },
 });
